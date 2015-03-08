@@ -1,5 +1,7 @@
-for $answers in collection("answers")
-group by $user-id := $answers.owner.user_id
+import module namespace c = "http://28.io/modules/collections";
+
+for $answers in c:collection("qa", "answers")
+group by $user-id := $answers.user_id
 
 let $answers := for $answer in $answers
                 order by $answer.creation_date
@@ -15,7 +17,7 @@ let $rep   := sum($answers.score)
 let $count := count($answers)
 order by $streak descending
 return {
-    "username": $answers[1].owner.display_name,
+    "username": c:collection("users", "users")[$$.id eq $user-id].name,
     "number of answers": $count,
     "reputation": $rep,
     "largest contribution streak": days-from-duration($streak)

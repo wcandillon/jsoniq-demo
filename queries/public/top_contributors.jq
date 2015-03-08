@@ -1,12 +1,13 @@
+import module namespace c = "http://28.io/modules/collections";
+
 (:
  : Users who answered the most questions.
  :)
-for $answer in collection("answers")
-group by $user := $answer.owner.display_name
+for $answer in c:collection("qa", "answers")
+group by $user-id := $answer.user_id
 let $count := count($answer)
 order by $count descending
-return
-  {
-    name  : $user,
-    count : $count
-  }
+return {
+  name  : c:collection("users", "users")[$$.id eq $user-id],
+  count : $count
+}
